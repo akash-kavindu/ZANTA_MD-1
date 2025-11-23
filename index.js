@@ -110,7 +110,7 @@ async function connectToWA() {
       const m = sms(zanta, mek);
       const type = getContentType(mek.message);
       const from = mek.key.remoteJid;
-      const body = type === 'conversation' ? mek.message.conversation : mek.message[type]?.text || mek.message[type]?.caption || '';
+      const body = (type === 'conversation' ? mek.message.conversation : mek.message[type]?.text || mek.message[type]?.caption || '').trim();
       const isCmd = body.startsWith(prefix);
       const commandName = isCmd ? body.slice(prefix.length).trim().split(" ")[0].toLowerCase() : '';
       const args = body.trim().split(/ +/).slice(1);
