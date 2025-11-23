@@ -13,36 +13,77 @@ cmd(
     m,
     {
       from,
+      pushname,
       reply
     }
   ) => {
-    try {
-      const categories = {};
+try {
+      const config = await readEnv();
+      let menu = {
+        main: "",
+        download: "",
+        group: "",
+        owner: "",
+        convert: "",
+        search: "",
+      };
 
-      for (let cmdName in commands) {
-        const cmdData = commands[cmdName];
-        const cat = cmdData.category?.toLowerCase() || "other";
-        if (!categories[cat]) categories[cat] = [];
-        categories[cat].push({
-          pattern: cmdData.pattern,
-          desc: cmdData.desc || "No description"
-        });
+      for (let i = 0; i < commands.length; i++) {
+        if (commands[i].pattern && !commands[i].dontAddCommandList) {
+          menu[
+            commands[i].category
+          ] += `${config.PREFIX}${commands[i].pattern}\n`;
+        }
       }
 
-      let menuText = "📋 *Available Commands:*\n";
+      let madeMenu = `👋 *Hello  ${pushname}*
 
-      for (const [cat, cmds] of Object.entries(categories)) {
-        menuText += `\n📂 *${cat.toUpperCase()}*\n`;
-        cmds.forEach(c => {
-          menuText += `- .${c.pattern} : ${c.desc}\n`;
-        });
-      }
 
-      await reply(menuText.trim());
-    } catch (err) {
-      console.error(err);
-      reply("❌ Error generating menu.");
+| *MAIN COMMANDS* |
+    ▫️.alive
+    ▫️.menu
+    ▫️.ai <text>
+    ▫️.system
+    ▫️.owner
+| *DOWNLOAD COMMANDS* |
+    ▫️.song <text>
+    ▫️.video <text>
+    ▫️.fb <link>
+| *GROUP COMMANDS* |
+${menu.group}
+| *OWNER COMMANDS* |
+    ▫️.restart
+    ▫️.update
+| *CONVERT COMMANDS* |
+    ▫️.sticker <reply img>
+    ▫️.img <reply sticker>
+    ▫️.tr <lang><text>
+    ▫️.tts <text>
+| *SEARCH COMMANDS* |
+    ▫️.tts <text>
+${menu.search}
+
+
+🥶𝐌𝐚𝐝𝐞 𝐛𝐲 Akash🥶
+
+> ZANTA MENU MSG
+`;
+      await zanta.sendMessage(
+        from,
+        {
+          image: {
+            url: "https://raw.githubusercontent.com/Dark-Robin/Bot-Helper/refs/heads/main/autoimage/Bot%20robin%20menu.jpg",
+          },
+          caption: madeMenu,
+        },
+        { quoted: mek }
+      );
+    } catch (e) {
+      console.log(e);
+      reply(`${e}`);
     }
   }
 );
+
+
 
